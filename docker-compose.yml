@@ -1,0 +1,37 @@
+version: "3"
+services:
+  go:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: app
+    tty: true
+    ports:
+      - 80:8080
+    volumes:
+      - .:/go/src/app
+    environment:
+      APP_ENV: local
+      APP_DATABASE_HOST: mysql
+      APP_DATABASE_USERNAME: root
+      APP_DATABASE_PASSWORD: mysql
+      APP_DATABASE: app_db
+      APP_DATABASE_HOST_RO: mysql
+      APP_DATABASE_USERNAME_RO: root
+      APP_DATABASE_PASSWORD_RO: mysql
+
+      TZ: Asia/Tokyo
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: app_db
+      TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysqladmin ping -h mysql -uroot -pmysql
+      interval: 10s
+      timeout: 5s
+      retries: 5
